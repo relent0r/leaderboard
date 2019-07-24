@@ -22,12 +22,12 @@ host = "https://" + args.address + "/"
 username = args.user
 password = args.password
 clan_id = args.clanid
-print(host)
+logger.debug(host)
 apireq = fafapi(host)
 
 token = apireq.get_token(username, password)
 if token != "error":
-    print(token)
+    logger.debug(token)
     clan_info = apireq.get_clan_info(token, clan_id)
     print("Clan Name : ", clan_info['data']['attributes']['name'])
     leader_id = clan_info['data']['relationships']['leader']['data']['id']
@@ -37,7 +37,7 @@ if token != "error":
     for member in clan_info['data']['relationships']['memberships']['data']:
         clan_player_id = member['id']
         player = apireq.get_clan_player(token, clan_player_id)
-        print("Player : ", player['data']['attributes']['login'])
+        print("Player : {}" .format(player['data']['attributes']['login']))
         global_rating = apireq.get_rating_player(token, "global", player['data']['id'])
         print("{} Global Rating is : {}".format(player['data']['attributes']['login'], int(global_rating['data']['attributes']['rating'])))
         ladder1v1_rating = apireq.get_rating_player(token, "ladder", player['data']['id'])
