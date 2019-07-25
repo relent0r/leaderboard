@@ -9,6 +9,7 @@ class fafapi:
     """
     def __init__(self, url):
         self.url = url
+
     
     def get_token(self, username, password):
         uri = self.url + "oauth/token"
