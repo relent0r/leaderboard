@@ -110,10 +110,10 @@ class fafapi:
         
         return data
 
-    def generate_rating_list(self, host, token, clan_id):
+    def generate_rating_list(self, token, clan_id):
         if token != "error":
             logger.debug(token)
-            apireq = fafapi(host)
+            apireq = fafapi(self.url)
             clan_info = apireq.get_clan_info(token, clan_id)
             clan_name = clan_info['data']['attributes']['name']
             logger.debug("Clan Name : {}" .format(clan_name))

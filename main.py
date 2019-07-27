@@ -43,7 +43,7 @@ apireq = fafapi(host)
 influx_client = influxclient(influx_host, influx_port, influx_org, influx_token, influx_bucket)
 token = apireq.get_token(username, password)
 
-ratings_list = apireq.generate_rating_list(host, token, clan_id)        
+ratings_list = apireq.generate_rating_list(token, clan_id)        
 if ratings_list != 'error':  
     for rating in ratings_list:
         influx_client.write(rating)
