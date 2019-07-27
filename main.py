@@ -40,35 +40,14 @@ influx_token = args.influxtoken
 
 logger.debug(host)
 apireq = fafapi(host)
-client = influxclient(influx_host, influx_port, influx_org, influx_token, influx_bucket)
+influx_client = influxclient(influx_host, influx_port, influx_org, influx_token, influx_bucket)
 token = apireq.get_token(username, password)
-if token != "error":
-    logger.debug(token)
-    clan_info = apireq.get_clan_info(token, clan_id)
-    clan_name = clan_info['data']['attributes']['name']
-    logger.debug("Clan Name : {}" .format(clan_name))
-    leader_id = clan_info['data']['relationships']['leader']['data']['id']
-    leader_data = apireq.get_player_info(token, leader_id)
-    leader = leader_data['data']['attributes']['login']
-    logger.debug("Clan Leader : {}" .format(leader))
-    for member in clan_info['data']['relationships']['memberships']['data']:
-        clan_player_id = member['id']
-        player = apireq.get_clan_player(token, clan_player_id)
-        player_name = player['data']['attributes']['login']
-        logger.debug("Player : {}" .format(player_name))
-        global_rating = apireq.get_rating_player(token, "global", player['data']['id'])
-        global_rating_int = int(global_rating['data']['attributes']['rating'])
-        logger.debug("{} Global Rating is : {}".format(player_name, global_rating_int))
-        ladder1v1_rating = apireq.get_rating_player(token, "ladder", player['data']['id'])
-        ladder1v1_rating_int = int(ladder1v1_rating['data']['attributes']['rating'])
-        logger.debug("{} Ladder Rating is : {}".format(player_name, ladder1v1_rating_int))
-        client.write('player_ratings' + ',' + 'player=' + player_name \
-            + ',' + 'clan=' + 'TUS' + ' ' + 'GlobalRating=' + str(global_rating_int))
-        client.write('player_ratings' + ',' + 'player=' + player_name \
-            + ',' + 'clan=' + 'TUS' + ' ' + 'LadderRating=' + str(ladder1v1_rating_int))
-else:
-    print("Any error occured getting token")
 
-#def generate_influx_data()
+ratings_list = apireq.generate_rating_list(host, token, clan_id)        
+if ratings_list != 'error':  
+    for rating in ratings_list:
+        influx_client.write(rating)
+else:
+    logger.warn('Ratings List has error value : {}' .format(ratings_list))
 
 print('done')

@@ -110,5 +110,37 @@ class fafapi:
         
         return data
 
+    def generate_rating_list(self, host, token, clan_id):
+        if token != "error":
+            logger.debug(token)
+            apireq = fafapi(host)
+            clan_info = apireq.get_clan_info(token, clan_id)
+            clan_name = clan_info['data']['attributes']['name']
+            logger.debug("Clan Name : {}" .format(clan_name))
+            leader_id = clan_info['data']['relationships']['leader']['data']['id']
+            leader_data = apireq.get_player_info(token, leader_id)
+            leader = leader_data['data']['attributes']['login']
+            logger.debug("Clan Leader : {}" .format(leader))
+            ratings_list = []
+            for member in clan_info['data']['relationships']['memberships']['data']:
+                clan_player_id = member['id']
+                player = apireq.get_clan_player(token, clan_player_id)
+                player_name = player['data']['attributes']['login']
+                logger.debug("Player : {}" .format(player_name))
+                global_rating = apireq.get_rating_player(token, "global", player['data']['id'])
+                global_rating_int = int(global_rating['data']['attributes']['rating'])
+                logger.debug("{} Global Rating is : {}".format(player_name, global_rating_int))
+                ladder1v1_rating = apireq.get_rating_player(token, "ladder", player['data']['id'])
+                ladder1v1_rating_int = int(ladder1v1_rating['data']['attributes']['rating'])
+                logger.debug("{} Ladder Rating is : {}".format(player_name, ladder1v1_rating_int))
+                ratings_list.append('player_ratings' + ',' + 'player=' + player_name \
+                    + ',' + 'clan=' + 'TUS' + ' ' + 'GlobalRating=' + str(global_rating_int))
+                ratings_list.append('player_ratings' + ',' + 'player=' + player_name \
+                    + ',' + 'clan=' + 'TUS' + ' ' + 'LadderRating=' + str(ladder1v1_rating_int))
+   
+            return ratings_list
+        else:
+            logger.warn('Invalid Token')
+            return 'error'
 
 
