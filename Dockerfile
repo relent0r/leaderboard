@@ -1,5 +1,5 @@
 FROM python:3
-MAINTAINER dwtaylornz@gmail.com
+LABEL authors="relent0r, dwtaylornz"
 
 WORKDIR /usr/src/app
 
