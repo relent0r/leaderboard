@@ -4,8 +4,8 @@ LABEL authors="relent0r, dwtaylornz"
 WORKDIR /usr/src/app
 
 COPY *.py ./
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt ./
 
-COPY . .
+RUN pip install --no-cache-dir -r requirements.txt
 
 CMD [ "python", "./main.py" ]
