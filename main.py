@@ -14,7 +14,7 @@ def GetArgs():
    Supports the command-line arguments listed below.
    """
 
-   parser = argparse.ArgumentParser(description='Process args for powering on a Virtual Machine')
+   parser = argparse.ArgumentParser(description='Process args')
    parser.add_argument('-a', '--apiaddress', required=False, action='store', help='Remote host to connect to')
    parser.add_argument('-u', '--user', required=True, action='store', help='User name to use when connecting to host')
    parser.add_argument('-p', '--password', required=True, action='store', help='Password to use when connecting to host')
