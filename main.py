@@ -2,6 +2,8 @@ from fafclient import fafapi
 from influxclient import influxclient
 import logging
 import argparse
+import schedule
+import time
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -37,17 +39,21 @@ influx_bucket = args.influxbucket
 influx_token = args.influxtoken
 
 
+def job():
+    logger.debug(host)
+    apireq = fafapi(host)
+    influx_client = influxclient(influx_host, influx_port, influx_org, influx_token, influx_bucket)
+    token = apireq.get_token(username, password)
 
-logger.debug(host)
-apireq = fafapi(host)
-influx_client = influxclient(influx_host, influx_port, influx_org, influx_token, influx_bucket)
-token = apireq.get_token(username, password)
+    ratings_list = apireq.generate_rating_list(token, clan_id)        
+    if ratings_list != 'error':  
+        for rating in ratings_list:
+            influx_client.write(rating)
+    else:
+        logger.warn('Ratings List has error value : {}' .format(ratings_list))
 
-ratings_list = apireq.generate_rating_list(token, clan_id)        
-if ratings_list != 'error':  
-    for rating in ratings_list:
-        influx_client.write(rating)
-else:
-    logger.warn('Ratings List has error value : {}' .format(ratings_list))
-
+schedule.every(5).minutes.do(job)
+while True:
+    schedule.run_pending()
+    time.sleep(5)
 print('done')
