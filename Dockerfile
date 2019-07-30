@@ -3,7 +3,7 @@ MAINTAINER dwtaylornz@gmail.com
 
 WORKDIR /usr/src/app
 
-COPY requirements.txt ./
+COPY *.py ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
