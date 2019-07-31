@@ -1,8 +1,10 @@
 FAF Scoreboard!
 
+
 Queries FAForever public api for clan member ratings and sends them to an influxdb. Runs on a configurable schedule of X minutes.
 
 This app can take either commandline arguments or a mixture of yaml file for configuration variables and environment variables for credentials, or a mix of the two.
+
 
 Arguments
 
@@ -47,6 +49,7 @@ API token for the influx api.
 yaml configuration file.
 
 
+
 Example Config YAML
 
 apiaddress: "api.faforever.com"
@@ -62,18 +65,23 @@ influxorg: "skynet"
 influxbucket: "fafdump"
 
 
+
 Required Environment Variable Names
 
 FAFUSER
 
 FAF Username
 
+
 FAFPASS
 
 FAF Password
 
+
 INFLUXTOKEN
 
 API token for the influx api.
+
+
 
 TODO : Add schedule as argument.
