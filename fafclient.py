@@ -1,5 +1,6 @@
 import requests
 import logging
+from datetime import date, timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -142,5 +143,53 @@ class fafapi:
         else:
             logger.warn('Invalid Token')
             return 'error'
+    
+    def get_player_gameStats(self, token, player_id):
+        """
+        Gets gates and some info from the players previous games
+        """
+        #Set date to the previous month so we only capture 4 weeks of games
+        current_date = date.today() - timedelta(weeks=+4)
+        format_date = current_date.strftime('%Y-%m-%dT%H:%M:%S') + 'Z'
+        
+        uri = self.url + 'data/gamePlayerStats?filter=player.id%3D%3D' + str(player_id) + ' and ' + 'scoreTime%3E' + format_date
+        headers = {
+        'cache-control': "no-cache",
+        'Authorization': "Bearer " + token
+        }
+        try:
+            response = requests.request("GET", uri, headers=headers)
+            if response.status_code != 200:
+                response.raise_for_status() 
+            elif response.status_code == 200:
+                data = response.json()
+        except requests.exceptions.HTTPError:
+            logger.warning('request error, response code is %s', response.status_code)
+            data = "error"
+        
+        return data
 
+    def get_player_game(self, token, game_id):
+        """
+        Gets gates and some info from a game
+        """
+        
+        uri = self.url + 'data/game/' + str(game_id)
+        headers = {
+        'cache-control': "no-cache",
+        'Authorization': "Bearer " + token
+        }
+        try:
+            response = requests.request("GET", uri, headers=headers)
+            if response.status_code != 200:
+                response.raise_for_status() 
+            elif response.status_code == 200:
+                data = response.json()
+        except requests.exceptions.HTTPError:
+            logger.warning('request error, response code is %s', response.status_code)
+            data = "error"
+        
+        return data
+
+    
 
