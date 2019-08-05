@@ -191,5 +191,32 @@ class fafapi:
         
         return data
 
-    
+    def generate_games_list(self, token, player_id):
+        """
+        Adds games to influx
+        """
+        recent_games = self.get_player_gameStats(token, player_id)
+        player = self.get_player_info(token, player_id)
+        player_name = player['data']['attributes']['login']
+        games_list = []
+        for game in recent_games['data']:
+            if game['attributes']['afterDeviation'] != None:
+                logger.debug('Game ID : {}' .format(game['relationships']['game']['data']['id']))
+                game_id = game['relationships']['game']['data']['id']
+
+                game_data = self.get_player_game(token, game_id)
+                game_name = game_data['data']['attributes']['name']
+                start_time = game_data['data']['attributes']['startTime']
+                end_time = game_data['data']['attributes']['endTime']
+                if game_data['data']['attributes']['validity'] == 'VALID':
+                    ranked = 'YES'
+                else:
+                    ranked = 'NO'
+                
+                games_list.append('player_games' + ',' + 'player=' + player_name \
+                    + ',' + 'clan=' + 'TUS' + ' ' + 'Game_Name=' + game_name \
+                    + ' ' + 'Start_Time=' + str(start_time) + ' ' + 'End_Time=' + str(end_time) \
+                    + ' ' + 'Ranked=' + ranked)
+
+        return games_list
 
